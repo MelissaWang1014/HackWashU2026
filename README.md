@@ -64,7 +64,7 @@ For hosted use, configure `DEEPSEEK_API_KEY` as a secret in the authorized hosti
 
 Choose **DeepSeek reading**, enter a question, then choose **Generate my reading**. Only chart type, whether birth time is known, ascendant sign, planet signs/houses, and the question are sent to DeepSeek. The application excludes name, profile ID, birth date, time, location, and coordinates from the chart payload. Questions are user-entered, so avoid putting private details in them. Requests reuse the website’s account/origin checks. They do not send iMessages or save AI readings to D1. Readings remain in page memory per calculated chart and D1/D9 view; a page reload clears them.
 
-The existing guided Chandra/iMessage companion is separate from this AI-reading feature. Basic readings are deterministic local content, and are never presented as DeepSeek-generated responses. Automated tests mock provider responses; a real end-to-end DeepSeek call requires your own configured key and has not been verified in this clone.
+The existing guided Chandra/iMessage companion is separate from this AI-reading feature. Basic readings are deterministic local content, and are never presented as DeepSeek-generated responses. Automated tests mock provider responses. A live API check reached DeepSeek successfully, but generation returned HTTP 402 (insufficient account balance). The UI now reports this condition explicitly. Successful live generation still needs verification after the account has credit.
 
 ## Architecture
 
@@ -156,7 +156,7 @@ This version calculates positions from entered birth details; it no longer retur
 
 Verified during development:
 
-- `npm test`: 14 tests covering the original calculation/agent flows plus house rotation, D9 mappings, unknown-time handling, element totals, minimized AI payloads, provider configuration, validation, failures/timeouts and truncated responses.
+- `npm test`: 15 tests covering the original calculation/agent flows plus house rotation, D9 mappings, unknown-time handling, element totals, minimized AI payloads, provider configuration, validation, failures/timeouts and truncated responses.
 - Local browser flow: calculate a chart, save a profile, reload and retrieve it, compare two example people, and discuss the comparison.
 - Spectrum terminal provider received `/chandra help` and emitted a reply.
 - WebMCP navigation accepted a valid view and rejected an invalid one.

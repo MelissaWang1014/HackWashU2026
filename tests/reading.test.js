@@ -113,3 +113,11 @@ test('truncated provider output is marked so the UI can explain it', async () =>
   const response=await handleReading(request(payload()),{DEEPSEEK_API_KEY:'test'},async()=>Response.json({choices:[{message:{content:'Partial answer'},finish_reason:'length'}]}));
   assert.equal((await response.json()).truncated,true);
 });
+
+test('insufficient provider balance is actionable and is not reported as a temporary failure', async () => {
+  const response=await handleReading(request(payload()),{DEEPSEEK_API_KEY:'test'},async()=>new Response('Insufficient Balance',{status:402}));
+  assert.equal(response.status,402);
+  const data=await response.json();
+  assert.equal(data.code,'INSUFFICIENT_BALANCE');
+  assert.match(data.error,/add credit/);
+});

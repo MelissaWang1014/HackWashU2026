@@ -36,6 +36,7 @@ export async function handleReading(req, env, fetcher = fetch) {
       signal:AbortSignal.timeout(45000),
     });
     if (!response.ok) {
+      if (response.status === 402) return json({error:'The DeepSeek account has insufficient credit. The site owner needs to add credit before generating a reading.', code:'INSUFFICIENT_BALANCE'}, 402);
       if (response.status === 429) return json({error:'DeepSeek is busy. Please wait a moment and try again.'}, 429);
       return json({error:'DeepSeek could not complete this reading. Please try again later.'}, 502);
     }
