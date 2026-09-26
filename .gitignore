@@ -12,3 +12,8 @@ site.tar.gz
 dist/
 .DS_Store
 *.log
+
+# Wrangler local secrets
+.dev.vars
+.dev.vars.*
+!.dev.vars.example

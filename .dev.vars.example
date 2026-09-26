@@ -1,0 +1,3 @@
+# Copy to .dev.vars and fill in privately. Wrangler reads this file for npm run dev.
+DEEPSEEK_API_KEY=
+DEEPSEEK_MODEL=deepseek-flash
