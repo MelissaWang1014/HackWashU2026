@@ -89,7 +89,9 @@ export function mountChartReading(container, chart, divisional = false) {
   function explore(el) {
     hovered = el.dataset.sign;
     const sector = signSector(chart, hovered, divisional);
-    tooltip.innerHTML = `<strong>${sector.house ? `House ${sector.house} · ${sector.meaning.title}` : `${sector.sign} · House unknown`}</strong><span>${sector.meaning?.text || 'Enter a birth time to see the life area for this sign.'}</span>`;
+    const placements = sector.planets.map(p => `${p.name} in ${p.sign} · ${Math.floor(p.degree)}°${p.house ? ` · House ${p.house}` : ''}`).join('<br>');
+    const focus = sector.planets.length ? sector.planets.map(p => `${p.name} highlights ${PLANET_THEMES[p.name]}`).join('. ') + '.' : 'No planets occupy this sign, so this area is read through its house ruler and sign tone.';
+    tooltip.innerHTML = `<strong>${sector.house ? `House ${sector.house} · ${sector.meaning.title}` : `${sector.sign} · House unknown`}</strong><span>${sector.meaning?.text || 'Enter a birth time to connect this sign to a life area.'}</span><span class="tooltip-specific"><b>${sector.planets.length ? 'Your placements here' : 'Your chart here'}</b><br>${placements || `${sector.sign} sign themes only`}</span><span>${focus}</span>`;
     tooltip.hidden = false;
     all('[aria-describedby="houseTooltip"]').forEach(item => item.removeAttribute('aria-describedby'));
     el.setAttribute('aria-describedby','houseTooltip');
@@ -124,11 +126,13 @@ export function mountChartReading(container, chart, divisional = false) {
 
   function renderAi() {
     if (!alive || state.tab !== 'ai') return;
-    const thread = state.messages.map(message => `<div class="ai-message ${message.role}"><span class="ai-message-label">${message.role === 'user' ? 'YOU' : 'DEEPSEEK'}</span><div class="ai-message-body" data-message-id="${message.id}"></div></div>`).join('');
+    const firstAnswer = state.messages.find(message => message.role === 'assistant');
+    const thread = state.messages.filter(message => message !== firstAnswer).map(message => `<div class="ai-message ${message.role}"><span class="ai-message-label">${message.role === 'user' ? 'YOU' : 'DEEPSEEK'}</span><div class="ai-message-body" data-message-id="${message.id}"></div></div>`).join('');
+    const featured = firstAnswer ? `<article class="ai-featured"><div class="ai-featured-top"><span class="ai-orbit" aria-hidden="true">✧</span><div><p class="eyebrow">DEEPSEEK BASIC READING · ${divisional ? 'D9' : 'D1'}</p><h4>Your chart in context</h4></div></div><div class="ai-featured-text" data-message-id="${firstAnswer.id}"></div></article>` : '';
     content.innerHTML = `<div class="ai-intro"><span class="ai-orbit" aria-hidden="true">✧</span><p class="eyebrow">A LITTLE DEEPER</p><h3>Your sky, in words.</h3><p>DeepSeek starts with a chart overview. Ask a follow-up whenever you want to go deeper.</p></div>
       <p class="ai-connection ${state.available === false ? 'not-connected' : ''}" role="status"><span></span>${checking ? 'Checking DeepSeek connection…' : state.available === true ? 'DeepSeek is connected' : state.available === false ? 'DeepSeek is not connected yet' : 'Connection could not be checked'}</p>
       ${state.available === false ? '<p class="reading-note">AI readings will be available once the site owner connects DeepSeek. You can explore your full basic reading now.</p>' : ''}
-      <div class="ai-thread" aria-live="polite" aria-busy="${busy}">${thread || '<p class="ai-thread-empty">Your DeepSeek reading will appear here.</p>'}</div>
+      ${featured}<section class="ai-followups"><p class="eyebrow">ASK A FOLLOW-UP</p><div class="ai-thread" aria-live="polite" aria-busy="${busy}">${thread || '<p class="ai-thread-empty">Your questions and DeepSeek answers will appear here.</p>'}</div></section>
       <div class="ai-question-chips" aria-label="Suggested questions">${questions.map((q,i) => `<button data-ai-question="${i}" ${busy ? 'disabled' : ''}>${esc(q)} <span>↗</span></button>`).join('')}</div>
       <form id="aiReadingForm" class="ai-composer"><label for="readingQuestion">Ask a follow-up question</label><textarea id="readingQuestion" maxlength="600" rows="2" required ${busy ? 'disabled' : ''} placeholder="For example: what can I reflect on in relationships?">${esc(state.question)}</textarea><p class="reading-footnote">Your chart placements and question are sent to DeepSeek. Raw birth details are not included.</p><button type="submit" class="primary full" ${busy || checking || state.available !== true ? 'disabled' : ''}>${busy ? '<span class="reading-spinner" aria-hidden="true"></span> Thinking…' : 'Ask DeepSeek <span aria-hidden="true">↗</span>'}</button></form>
       ${state.available !== true && !checking ? '<button class="textbutton full" id="retryConnection">Check connection again</button>' : ''}<p class="error ai-error" role="alert">${esc(state.error)}</p><p class="reading-footnote">AI interpretations may be inaccurate. Treat them as reflections, not predictions.</p>`;
