@@ -1,0 +1,14 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.wrangler/
+.sites-runtime/
+agent/data/
+.build/
+site.tar.gz
+
+# Generated output and local operating-system files
+dist/
+.DS_Store
+*.log

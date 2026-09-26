@@ -1,0 +1,1 @@
+{"name":"chandra-moon-journey","main":"dist/server/index.js","compatibility_date":"2026-09-01","d1_databases":[{"binding":"DB","database_name":"chandra-local","database_id":"local-preview","migrations_dir":"drizzle"}],"vars":{"LOCAL_PREVIEW":"1"}}
