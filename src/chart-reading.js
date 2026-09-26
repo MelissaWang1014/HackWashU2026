@@ -66,7 +66,6 @@ export function mountChartReading(container, chart, divisional = false) {
   container.innerHTML = `<div class="chart-explorer"><div class="chart-column"><div class="chart-caption"><span>${divisional ? 'NAVAMSA / D9' : 'YOUR BIRTH CHART / D1'}</span><span>SIDEREAL</span></div>
     <div class="chart-stage">${diagram(chart, divisional)}<div class="house-tooltip" role="tooltip" id="houseTooltip" hidden></div></div>
     <p class="chart-instruction"><span aria-hidden="true">⌖</span> Hover to explore. Click or tap to keep a house in view.</p>
-    <div class="house-shortcuts" aria-label="Explore life areas">${[[10,'Work'],[4,'Family'],[7,'Relationships']].map(([house,label]) => `<button data-house-shortcut="${house}" ${chart.asc ? '' : 'disabled'}>${label} <span>↗</span></button>`).join('')}</div>
     <section class="house-detail" aria-label="Selected chart area" aria-live="polite"></section>
     <p class="reading-footnote">${chart.asc ? 'Whole-sign houses begin at the ascendant. An empty house still represents a part of life.' : 'A birth time is needed to connect these signs to houses and life areas.'}</p>
     </div><aside class="interpretation-panel" aria-label="Chart interpretations"><div class="reading-tabs" role="tablist" aria-label="Interpretation type"><button id="basicReadingTab" role="tab" data-reading-tab="basic" aria-controls="readingContent">Basic reading</button><button id="aiReadingTab" role="tab" data-reading-tab="ai" aria-controls="readingContent"><span class="ai-spark" aria-hidden="true">✧</span> DeepSeek reading</button></div><div id="readingContent" role="tabpanel"></div></aside></div>`;
@@ -85,7 +84,7 @@ export function mountChartReading(container, chart, divisional = false) {
       <p class="house-keywords">${sector.meaning?.keywords || 'Birth time unknown'}</p><p>${sector.meaning?.text || 'Explore the planets in this sign. A reliable birth time is needed to identify its house and life themes.'}</p>
       <div class="house-planets">${sector.planets.length ? sector.planets.map(p => `<span>${p.name}</span>`).join('') : '<span class="empty-house-label">No planets here</span>'}</div>
       ${sector.planets.length ? `<p class="planet-meaning">${sector.planets.map(p => `${p.name} brings a symbolic focus on ${PLANET_THEMES[p.name]}.`).join(' ')}</p>` : `<p class="planet-meaning">${sector.house ? 'An empty house does not mean this area of life is missing.' : 'No planets occupy this sign in the provisional noon chart.'}</p>`}
-      ${sector.meaning ? `<p class="house-reflection">${sector.meaning.prompt}</p>` : ''}`;
+      `;
   }
   function hideTooltip() {hovered = null; tooltip.hidden = true; all('[aria-describedby="houseTooltip"]').forEach(el => el.removeAttribute('aria-describedby')); updateSector();}
   function explore(el) {
