@@ -59,7 +59,7 @@ export function mountChartReading(container, chart, divisional = false) {
   let states = savedStates.get(chart);
   if (!states) {states = {}; savedStates.set(chart, states);}
   const key = divisional ? 'd9' : 'd1';
-  const state = states[key] ||= {tab:'basic', sign:divisional ? chart.moon.d9 : chart.moon.sign, question:'Give me an overview of my chart.', result:null, error:'', available:null};
+  const state = states[key] ||= {tab:'basic', sign:divisional ? chart.moon.d9 : chart.moon.sign, question:'What should I understand first about my chart?', messages:[], error:'', available:null, initialRequested:false};
   let alive = true, hovered = null, request = null, busy = false, checking = false;
   container.innerHTML = `<div class="chart-explorer"><div class="chart-column"><div class="chart-caption"><span>${divisional ? 'NAVAMSA / D9' : 'YOUR BIRTH CHART / D1'}</span><span>SIDEREAL</span></div>
     <div class="chart-stage">${diagram(chart, divisional)}<div class="house-tooltip" role="tooltip" id="houseTooltip" hidden></div></div>
@@ -124,17 +124,15 @@ export function mountChartReading(container, chart, divisional = false) {
 
   function renderAi() {
     if (!alive || state.tab !== 'ai') return;
-    content.innerHTML = `<div class="ai-intro"><span class="ai-orbit" aria-hidden="true">✧</span><p class="eyebrow">A LITTLE DEEPER</p><h3>Your sky, in words.</h3><p>Connect the patterns in your chart with a question on your mind.</p></div>
+    const thread = state.messages.map(message => `<div class="ai-message ${message.role}"><span class="ai-message-label">${message.role === 'user' ? 'YOU' : 'DEEPSEEK'}</span><div class="ai-message-body" data-message-id="${message.id}"></div></div>`).join('');
+    content.innerHTML = `<div class="ai-intro"><span class="ai-orbit" aria-hidden="true">✧</span><p class="eyebrow">A LITTLE DEEPER</p><h3>Your sky, in words.</h3><p>DeepSeek starts with a chart overview. Ask a follow-up whenever you want to go deeper.</p></div>
       <p class="ai-connection ${state.available === false ? 'not-connected' : ''}" role="status"><span></span>${checking ? 'Checking DeepSeek connection…' : state.available === true ? 'DeepSeek is connected' : state.available === false ? 'DeepSeek is not connected yet' : 'Connection could not be checked'}</p>
       ${state.available === false ? '<p class="reading-note">AI readings will be available once the site owner connects DeepSeek. You can explore your full basic reading now.</p>' : ''}
+      <div class="ai-thread" aria-live="polite" aria-busy="${busy}">${thread || '<p class="ai-thread-empty">Your DeepSeek reading will appear here.</p>'}</div>
       <div class="ai-question-chips" aria-label="Suggested questions">${questions.map((q,i) => `<button data-ai-question="${i}" ${busy ? 'disabled' : ''}>${esc(q)} <span>↗</span></button>`).join('')}</div>
-      <form id="aiReadingForm"><label for="readingQuestion">What would you like to explore?</label><textarea id="readingQuestion" maxlength="600" rows="3" required ${busy ? 'disabled' : ''}>${esc(state.question)}</textarea><p class="reading-footnote">Generate sends your chart placements and question to DeepSeek. Your name and raw birth details are not included. Avoid personal details in your question.</p>
-      <button type="submit" class="primary full" ${busy || checking || state.available !== true ? 'disabled' : ''}>${busy ? '<span class="reading-spinner" aria-hidden="true"></span> Reading your sky…' : 'Generate my reading <span aria-hidden="true">↗</span>'}</button></form>
-      ${state.available !== true && !checking ? '<button class="textbutton full" id="retryConnection">Check connection again</button>' : ''}
-      <p class="error ai-error" role="alert">${esc(state.error)}</p>
-      <div class="ai-answer" aria-live="polite" aria-busy="${busy}" ${state.result ? '' : 'hidden'}>${state.result ? `<p class="eyebrow">DEEPSEEK · ${divisional ? 'D9' : 'D1'} READING</p><h4>${esc(state.result.question)}</h4><div class="ai-answer-text"></div>${state.result.truncated ? '<p class="reading-note">This response reached the length limit. Try a more focused question.</p>' : ''}` : ''}</div>
-      <p class="reading-footnote">AI interpretations may be inaccurate. Treat them as reflections, not predictions.</p>`;
-    if (state.result) find('.ai-answer-text').textContent = state.result.text;
+      <form id="aiReadingForm" class="ai-composer"><label for="readingQuestion">Ask a follow-up question</label><textarea id="readingQuestion" maxlength="600" rows="2" required ${busy ? 'disabled' : ''} placeholder="For example: what can I reflect on in relationships?">${esc(state.question)}</textarea><p class="reading-footnote">Your chart placements and question are sent to DeepSeek. Raw birth details are not included.</p><button type="submit" class="primary full" ${busy || checking || state.available !== true ? 'disabled' : ''}>${busy ? '<span class="reading-spinner" aria-hidden="true"></span> Thinking…' : 'Ask DeepSeek <span aria-hidden="true">↗</span>'}</button></form>
+      ${state.available !== true && !checking ? '<button class="textbutton full" id="retryConnection">Check connection again</button>' : ''}<p class="error ai-error" role="alert">${esc(state.error)}</p><p class="reading-footnote">AI interpretations may be inaccurate. Treat them as reflections, not predictions.</p>`;
+    state.messages.forEach(message => {const node=find(`[data-message-id="${message.id}"]`); if (node) node.textContent=message.text;});
     find('#readingQuestion').oninput = event => {state.question = event.target.value;};
     all('[data-ai-question]').forEach(button => button.onclick = () => {state.question = questions[Number(button.dataset.aiQuestion)]; find('#readingQuestion').value = state.question; find('#readingQuestion').focus();});
     if (find('#retryConnection')) find('#retryConnection').onclick = checkConnection;
@@ -143,31 +141,19 @@ export function mountChartReading(container, chart, divisional = false) {
   async function checkConnection() {
     if (checking) return;
     checking = true; renderAi();
-    try {
-      const response = await fetch('/api/reading', {signal:AbortSignal.timeout(10000)});
-      const data = await response.json();
-      if (!response.ok) throw Error('Could not check connection.');
-      if (alive) state.available = data.available === true;
-    } catch {if (alive) state.available = null;}
-    finally {checking = false; renderAi();}
+    try {const response = await fetch('/api/reading', {signal:AbortSignal.timeout(10000)});const data = await response.json();if (!response.ok) throw Error('Could not check connection.');if (alive) state.available = data.available === true;}
+    catch {if (alive) state.available = null;}
+    finally {checking = false; renderAi(); if (alive && state.available === true && !state.initialRequested && !state.messages.length) {state.initialRequested = true; generate(null, 'Give me a clear basic overview of my chart and the themes I may want to reflect on.');}}
   }
-  async function generate(event) {
-    event.preventDefault();
-    if (busy || state.available !== true || !state.question.trim()) return;
-    const question = state.question.trim();
-    busy = true; state.error = ''; state.result = null; request = new AbortController(); renderAi();
-    try {
-      const response = await fetch('/api/reading', {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({context:readingContext(chart, divisional), question}),
-        signal:AbortSignal.any([request.signal, AbortSignal.timeout(55000)]),
-      });
-      const data = await response.json();
-      if (!response.ok) {if (data.code === 'NOT_CONFIGURED') state.available = false; throw Error(data.error || 'This reading could not be completed.');}
-      if (alive) state.result = {text:data.text, question, truncated:data.truncated};
-    } catch (error) {
-      if (alive) state.error = error.name === 'TimeoutError' ? 'This reading took too long. Please try again.' : error.name === 'TypeError' || error instanceof SyntaxError ? 'Could not reach the reading service. Please try again.' : error.message;
-    } finally {busy = false; request = null; renderAi();}
+  async function generate(event, automaticQuestion) {
+    event?.preventDefault();
+    if (busy || state.available !== true) return;
+    const question = (automaticQuestion || state.question).trim();
+    if (!question) return;
+    state.question = ''; state.error = ''; const id = `${Date.now()}-${Math.random()}`; state.messages.push({id,role:'user',text:question}); busy = true; request = new AbortController(); renderAi();
+    try {const response = await fetch('/api/reading', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({context:readingContext(chart, divisional), question}),signal:AbortSignal.any([request.signal, AbortSignal.timeout(55000)])});const data = await response.json();if (!response.ok) {if (data.code === 'NOT_CONFIGURED') state.available = false;throw Error(data.error || 'This reading could not be completed.');}if (alive) state.messages.push({id:`${id}-answer`,role:'assistant',text:data.text,truncated:data.truncated});}
+    catch (error) {if (alive) {state.error = error.name === 'TimeoutError' ? 'This reading took too long. Please try again.' : error.name === 'TypeError' || error instanceof SyntaxError ? 'Could not reach the reading service. Please try again.' : error.message;state.messages = state.messages.filter(message => message.id !== id);}}
+    finally {busy = false; request = null; renderAi();}
   }
   function renderReading() {
     all('[data-reading-tab]').forEach(button => {
