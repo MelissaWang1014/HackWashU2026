@@ -192,3 +192,19 @@ dialog::backdrop{background:rgba(5,11,22,.86);backdrop-filter:blur(3px)}
 
 label{font-weight:500}
 .planet-map svg line{stroke:#d7e1ef!important;opacity:.2}
+
+/* Retained header Moon and motion control. */
+#motionToggle{color:#aabbd0;border:1px solid #b5c6df29;border-radius:24px;background:#13203577;padding:8px 14px;font-size:11px;letter-spacing:.04em}
+#motionToggle:hover{border-color:var(--gold);color:var(--gold)}
+.hero-orbit{position:relative;width:270px;height:240px;display:grid;place-items:center;margin-right:5%;flex-shrink:0}
+.hero-orbit .mini-moon{width:132px;height:132px;border-radius:50%;margin:0;border:0;opacity:.9;filter:drop-shadow(0 0 40px #91b5f02b);animation:moon-float 9s ease-in-out infinite}
+.orbit-ring{position:absolute;width:212px;height:212px;border:1px solid #c5d7ff24;border-radius:50%;animation:orbit-turn 40s linear infinite}
+.orbit-ring::after{content:'';position:absolute;top:26px;left:26px;width:5px;height:5px;border-radius:50%;background:#e4cda6;box-shadow:0 0 12px #d9bd8b88}
+.orbit-two{width:255px;height:175px;transform:rotate(-30deg);border-color:#c5d7ff12;animation-direction:reverse;animation-duration:60s}
+.orbit-two::after{width:3px;height:3px;background:#a0b8e8;top:20px;left:36px}
+@keyframes orbit-turn{to{rotate:360deg}}
+@keyframes moon-float{50%{transform:translateY(-8px)}}
+.motion-paused *, .motion-paused *::before,.motion-paused *::after{animation-play-state:paused!important}
+#motionToggle{margin-left:auto} .heading{position:relative}
+@media(max-width:620px){.hero-orbit{width:82px;height:100px;margin:0}.hero-orbit .mini-moon{width:64px;height:64px}.orbit-ring{width:82px;height:82px}.orbit-two{width:100px;height:70px}.orbit-ring::after{top:10px;left:10px}#motionToggle{font-size:10px;padding:7px 10px}}
+@media(prefers-reduced-motion:reduce){.hero-orbit *{animation:none!important}}

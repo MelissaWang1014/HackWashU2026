@@ -32,7 +32,7 @@ export function mountBirthMoon(container,chart){
    data[p.index]=texture.data[i]*light;data[p.index+1]=texture.data[i+1]*light;data[p.index+2]=texture.data[i+2]*light;data[p.index+3]=255*p.edge;
   }ctx.putImageData(pixels,0,0);
  }
- function animate(now){if(!alive)return;frame=requestAnimationFrame(animate);if(now-lastFrame<33)return;const delta=Math.min(now-lastFrame,100);lastFrame=now;if(!rotating||document.hidden||!canvas.getClientRects().length)return;rotation+=delta/30000;paint();}
+ function animate(now){if(!alive)return;frame=requestAnimationFrame(animate);if(now-lastFrame<33)return;const delta=Math.min(now-lastFrame,100);lastFrame=now;if(!rotating||document.documentElement.classList.contains('motion-paused')||document.hidden||!canvas.getClientRects().length)return;rotation+=delta/30000;paint();}
  prepareSphere();frame=requestAnimationFrame(animate);
  find('[data-spin]').onclick=()=>{rotating=!rotating;find('[data-spin]').textContent=rotating?'Pause rotation':'Resume rotation';find('[data-spin]').setAttribute('aria-pressed',String(rotating));};
  function detail(){const p=snapshot.planets.find(p=>p.name===selected);find('.planet-detail').textContent=`${p.name} · ${p.longitude.toFixed(1)}° tropical ecliptic longitude. ${p.name==='Moon'?'Our nearest celestial neighbor; its changing light is shown above.':p.name==='Sun'?'The Sun provides the light that creates the lunar phases.':'Its position is calculated as seen from the center of Earth.'}`;container.querySelectorAll('[data-body]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.body===selected)));}
