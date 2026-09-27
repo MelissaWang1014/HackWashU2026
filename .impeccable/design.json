@@ -1,0 +1,278 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-27T05:21:40Z",
+  "title": "Design System: CHANDRA",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Moonlit Gold",
+        "canonical": "#D9BD8B",
+        "tonalRamp": [
+          "#3A2C13",
+          "#60491F",
+          "#86662C",
+          "#AD8339",
+          "#C69D52",
+          "#D3B379",
+          "#E0C89F",
+          "#F9F4EC"
+        ]
+      },
+      "night": {
+        "role": "neutral",
+        "displayName": "Night Sky",
+        "canonical": "#0B1321",
+        "tonalRamp": [
+          "#132139",
+          "#203760",
+          "#2D4D86",
+          "#3963AC",
+          "#537DC6",
+          "#799AD2",
+          "#9FB7DF",
+          "#ECF1F9"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Observatory Surface",
+        "canonical": "#121D2D",
+        "tonalRamp": [
+          "#162337",
+          "#243B5B",
+          "#335280",
+          "#426AA4",
+          "#5B83BD",
+          "#7F9FCC",
+          "#A4BADB",
+          "#EDF1F8"
+        ]
+      },
+      "recessed": {
+        "role": "neutral",
+        "displayName": "Recessed Slate",
+        "canonical": "#0E1827",
+        "tonalRamp": [
+          "#142338",
+          "#223A5E",
+          "#2F5183",
+          "#3D68A9",
+          "#5681C2",
+          "#7C9DD0",
+          "#A1B9DD",
+          "#ECF1F8"
+        ]
+      },
+      "raised": {
+        "role": "neutral",
+        "displayName": "Raised Blue Slate",
+        "canonical": "#19263A",
+        "tonalRamp": [
+          "#172335",
+          "#263A59",
+          "#36527D",
+          "#4569A0",
+          "#5F83BA",
+          "#829EC9",
+          "#A6BAD9",
+          "#EDF1F7"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Moonlight",
+        "canonical": "#F2EEE6",
+        "tonalRamp": [
+          "#322A1A",
+          "#54462C",
+          "#75633D",
+          "#977F4F",
+          "#B09868",
+          "#C2AF8A",
+          "#D3C6AB",
+          "#F6F4EE"
+        ]
+      },
+      "muted-text": {
+        "role": "neutral",
+        "displayName": "Soft Moonlight",
+        "canonical": "#B1BBCA",
+        "tonalRamp": [
+          "#1F252E",
+          "#343D4C",
+          "#48566A",
+          "#5D6E89",
+          "#7688A2",
+          "#95A2B7",
+          "#B3BDCB",
+          "#F0F2F5"
+        ]
+      },
+      "divider": {
+        "role": "neutral",
+        "displayName": "Quiet Divider",
+        "canonical": "#D7E1EF24",
+        "tonalRamp": [
+          "#162437",
+          "#243B5B",
+          "#335380",
+          "#426BA4",
+          "#5B84BD",
+          "#809FCC",
+          "#A4BBDB",
+          "#EDF1F8"
+        ]
+      },
+      "accent-soft": {
+        "role": "primary",
+        "displayName": "Gold Tint",
+        "canonical": "#D9BD8B1F",
+        "tonalRamp": [
+          "#3A2C13",
+          "#60491F",
+          "#86662C",
+          "#AD8339",
+          "#C69D52",
+          "#D3B379",
+          "#E0C89F",
+          "#F9F4EC"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Quiet Display Serif",
+        "purpose": "Major page and chart headings."
+      },
+      "body": {
+        "displayName": "Native Interface Sans",
+        "purpose": "Body copy, controls, and chart data."
+      },
+      "label": {
+        "displayName": "Interface Label",
+        "purpose": "Form labels and compact controls."
+      }
+    },
+    "shadows": [
+      {
+        "name": "overlay-low",
+        "value": "0 4px 8px rgba(0,0,0,.22)",
+        "purpose": "Separate suggestions and tooltips from underlying content."
+      },
+      {
+        "name": "moon-image",
+        "value": "0 8px 18px rgba(0,0,0,.24)",
+        "purpose": "Hold the Moon canvas against its surface."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-ui",
+        "value": "160ms cubic-bezier(.2,.8,.2,1)",
+        "purpose": "Short feedback on active, hover, and selected states."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact-workspace",
+        "value": "850px"
+      },
+      {
+        "name": "mobile",
+        "value": "620px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The main action for calculating or saving chart work.",
+      "html": "<button class=\"ds-button-primary\">Calculate my chart</button>",
+      "css": ".ds-button-primary{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 16px;border:1px solid var(--gold);border-radius:8px;background:var(--gold);color:#172030;font:600 13px/1.4 var(--font-ui);transition:background-color 160ms cubic-bezier(.2,.8,.2,1),transform 160ms cubic-bezier(.2,.8,.2,1)}.ds-button-primary:hover{background:#e6d0a9;border-color:#e6d0a9}.ds-button-primary:focus-visible{outline:2px solid var(--gold);outline-offset:3px}.ds-button-primary:active{transform:translateY(1px)}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "A clear supporting action that keeps the screen quiet.",
+      "html": "<button class=\"ds-button-secondary\">Save birth profile</button>",
+      "css": ".ds-button-secondary{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 16px;border:1px solid rgba(217,189,139,.55);border-radius:8px;background:transparent;color:var(--gold);font:600 13px/1.4 var(--font-ui);transition:background-color 160ms cubic-bezier(.2,.8,.2,1),transform 160ms cubic-bezier(.2,.8,.2,1)}.ds-button-secondary:hover{background:var(--accent-soft);border-color:var(--gold);color:var(--ink)}.ds-button-secondary:focus-visible{outline:2px solid var(--gold);outline-offset:3px}"
+    },
+    {
+      "name": "Birth Detail Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "A labeled field for birth details and profile search.",
+      "html": "<label class=\"ds-field-label\">Birthplace<input class=\"ds-field\" placeholder=\"Search a city\"></label>",
+      "css": ".ds-field-label{display:block;color:#d2d8e1;font:500 13px/1.4 var(--font-ui)}.ds-field{display:block;width:100%;min-height:44px;margin-top:6px;padding:10px 12px;border:1px solid rgba(215,225,239,.2);border-radius:8px;background:var(--surface);color:var(--ink);font:400 14px/1.4 var(--font-ui)}.ds-field::placeholder{color:var(--muted);opacity:1}.ds-field:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-color:var(--gold)}"
+    },
+    {
+      "name": "Workspace Tab",
+      "kind": "nav",
+      "refersTo": "workspace-tab",
+      "description": "The existing top-level view selector, with a quiet selected state.",
+      "html": "<button class=\"ds-workspace-tab\" aria-selected=\"true\">Birth chart</button>",
+      "css": ".ds-workspace-tab{min-height:44px;padding:11px 14px;border:0;border-bottom:2px solid var(--gold);border-radius:7px 7px 0 0;background:var(--accent-soft);color:var(--ink);font:500 13px/1.4 var(--font-ui)}.ds-workspace-tab:focus-visible{outline:2px solid var(--gold);outline-offset:3px}"
+    },
+    {
+      "name": "Working Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "A flat, bordered surface for forms, charts, and profile work.",
+      "html": "<section class=\"ds-panel\"><h2>Birth information</h2></section>",
+      "css": ".ds-panel{padding:24px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink)}"
+    },
+    {
+      "name": "Chart Value Chip",
+      "kind": "chip",
+      "refersTo": "chart-pill",
+      "description": "A compact display for Moon, rising, and placement values.",
+      "html": "<span class=\"ds-chart-pill\">Moon <strong>Libra</strong></span>",
+      "css": ".ds-chart-pill{display:inline-flex;gap:4px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.035);color:var(--muted);font:400 12px/1.4 var(--font-ui)}.ds-chart-pill strong{color:var(--gold);font-weight:500}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Midnight Observatory",
+    "overview": "Someone explores a birth chart in a quiet room after dark. The interface should feel moonlit and contemplative while keeping the chart, controls, and caveats easy to read. The current midnight-blue and warm-gold identity stays in place, with the chart and NASA Moon imagery providing the atmosphere.\n\nThe product uses a restrained workspace with modest asymmetry around the chart and form. DESIGN_VARIANCE: 5, MOTION_INTENSITY: 3, and VISUAL_DENSITY: 4: familiar app navigation, clear working surfaces, and motion only for feedback or state change. Native system text keeps controls quick to read; a platform serif gives major headings a quiet contrast. This system rejects cluttered dashboards, neon sci-fi effects, purple gradients, generic horoscope clich\u00e9s, and decorative details that compete with the chart.",
+    "keyCharacteristics": [
+      "Deep blue surfaces with one warm-gold accent.",
+      "Flat tonal layers, with borders used to define working areas.",
+      "Serif reserved for major headings; sans serif for controls and chart data.",
+      "Responsive chart and profile surfaces with visible keyboard focus."
+    ],
+    "rules": [
+      {
+        "name": "The One Accent Rule",
+        "body": "Gold marks primary actions, selected states, and meaningful chart data. Use semantic error colors only for actual errors.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Voice Rule",
+        "body": "Display serif is for headings. Interface labels, buttons, and numerical data use the system sans-serif.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Surface Rule",
+        "body": "Do not pair a full border with a large soft shadow. Use surface contrast and spacing first.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep the chart and the person\u2019s task visually ahead of decoration.",
+      "Do use the existing Moon image and calculated chart visuals for atmosphere.",
+      "Do preserve visible focus, keyboard chart navigation, readable contrast, and reduced-motion behavior.",
+      "Do keep birth-calculation limits and privacy notes legible.",
+      "Do use one gold accent for actions and selected states."
+    ],
+    "donts": [
+      "Don't build cluttered dashboards and decorative UI that competes with the chart.",
+      "Don't add neon sci-fi effects, purple gradients, and generic horoscope clich\u00e9s.",
+      "Don't present compatibility scores as a verdict about a relationship.",
+      "Don't hide keyboard behavior, lower text contrast, or ignore motion preferences.",
+      "Don't add new product modes, reorder primary tabs, or change existing workflows as part of a visual refresh."
+    ]
+  }
+}
