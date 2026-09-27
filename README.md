@@ -1,3 +1,5 @@
+> Website update: the Discuss with Chandra feature has been removed, including the guided chat preview, iMessage entry point, and chart-context copy dialog. DeepSeek chart and relationship readings remain available. The standalone Photon agent code below is retained as a separate integration; its previous website import UI is no longer available.
+
 # CHANDRA · Fly to the Moon
 
 **A Vedic astrology workspace and Photon Spectrum iMessage companion, built for HackWashU 2026.**
@@ -84,7 +86,7 @@ The website and messaging agent are **two separate processes**. Publishing the w
 | Path | Purpose |
 | --- | --- |
 | `src/index.html`, `src/style.css` | English website structure and visual design |
-| `src/app.js` | Forms, profiles, charts, comparison, chat preview, context copying |
+| `src/app.js` | Forms, profiles, charts, comparison |
 | `src/chart-reading.js`, `src/interpretation.js` | Interactive chart, local readings, element mix, privacy-minimized AI context |
 | `src/reading-api.js` | Server-side DeepSeek integration, validation, timeout and provider error handling |
 | `.dev.vars.example` | Local Worker secret configuration template |
