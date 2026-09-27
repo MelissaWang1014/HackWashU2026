@@ -1,191 +1,149 @@
-> Website update: the Discuss with Chandra feature has been removed, including the guided chat preview, iMessage entry point, and chart-context copy dialog. DeepSeek chart and relationship readings remain available. The standalone Photon agent code below is retained as a separate integration; its previous website import UI is no longer available.
+# CHANDRA
 
-# CHANDRA · Fly to the Moon
+**Fly to the Moon. Find your own orbit.**
 
-**A Vedic astrology workspace and Photon Spectrum iMessage companion, built for HackWashU 2026.**
+Explore your birth sky, meet your Moon, and discover yourself through AI-guided reflection.
 
-Chandra turns the theme **“Fly to the Moon”** into an inward journey: explore the sky at birth, compare two people, and carry the chart context into a conversation. The entire website is in **English**, with midnight blue, moonlight silver, and warm gold styling.
+[Try the live website](https://chandra-moon-journey-mw.noisy-fig-2085.chatgpt.site) · [Source code](https://github.com/MelissaWang1014/HackWashU2026)
 
-[Current deployed website](https://chandra-moon-journey-mw.noisy-fig-2085.chatgpt.site) · [Handoff prompt for a new coding session](HANDOFF_PROMPT.md) · [Photon agent setup](agent/README.md)
+## Inspiration
 
-> The current Sites deployment is private and requires the original owner’s access. A GitHub clone does not grant access to that deployment or to Photon credentials. You can run the website locally without either account.
+When we heard **“Fly Me to the Moon,”** we thought about the journeys people made toward the Moon long before space travel—through curiosity, stories, and questions about their own lives.
 
-## What works
+CHANDRA turns that outward gaze into a journey inward. It combines astronomical calculations, the symbolic traditions of Vedic astrology, and AI-guided reflection in an approachable web experience. Users begin with their own birth sky, explore personal rhythms, and then consider a relationship from two perspectives.
 
-- **Birth information:** name, Gregorian date, local time, unknown-time option, birthplace, latitude/longitude, IANA time zone, and optional historical UTC offset.
-- **Birthplace presets:** a small built-in list of cities fills coordinates and time zones. Other locations can be entered manually; this is not a global geocoding service.
-- **Calculated charts:** D1 Rashi, D9 Navamsa, planetary positions, lunar nakshatra/pada, approximate ascendant and whole-sign houses, and Vimshottari mahadasha periods.
-- **Interactive houses:** hover or focus each D1/D9 cell to see its house, life area, and meaning. Click/tap or press Enter to keep an area selected. Work, Family, and Relationships shortcuts open houses 10, 4, and 7. Arrow keys move around the chart; Escape dismisses the tooltip. Houses are derived from the relevant ascendant, and are withheld when birth time is unknown.
-- **Basic readings:** a panel beside the chart (below it on small screens) explains Moon, Sun, and rising placements, plus an element ring based on the seven equally weighted classical planets. Percentages round to 100%; nodes and ascendant are excluded. D9 uses its own placements.
-- **DeepSeek readings:** a separate tab supports suggested or custom questions, server-side API requests, connection checks, loading/error/retry states, and chart-specific results. Requires a private server credential; without it, the UI explicitly shows that DeepSeek is not connected.
-- **Saved profiles:** create, edit, search, and delete birth profiles in Cloudflare D1. Hosted API queries are scoped to the authenticated Sites user.
-- **Two-person compatibility:** select exactly two profiles, compare Moon signs and planetary angular relationships, and explore a conversation prompt. Fictional example profiles support quick demos.
-- **Guided companion preview:** discuss the current chart or comparison on the website. This is deterministic, context-aware guidance, **not an LLM-backed general assistant**.
-- **Photon Spectrum integration:** a separate Node.js agent receives explicit `/chandra` commands over iMessage, uses threaded replies and typing indicators, and remembers the chart context the user imports.
-- **User-controlled handoff:** preview and copy selected names and chart placements for iMessage. Raw birth dates, times, and locations are omitted from that payload. Copying does not send a message.
-- Responsive layouts, English labels and explanations, and an optional WebMCP workspace-navigation tool.
+Our goal is to give complex ideas a gentle doorway while leaving room for each person’s own judgment.
 
-## Quick start
+## Explore CHANDRA
 
-Requirements: **Node.js 22+** and npm. Development was tested with Node 24.14.1. The first dependency installation needs an internet connection.
+| Feature | What you can do |
+| --- | --- |
+| Interactive birth chart | Enter your birth date, required local birth time, and city. Explore signs, planets, houses, and their symbolic themes. |
+| Chart views | Switch between the birth chart, Navamsa D9, planetary positions, and approximate Vedic life periods. |
+| Basic and AI readings | Start with structured explanations, then ask DeepSeek questions grounded in calculated chart data. |
+| Your birth Moon | See an automatically rotating lunar globe with a phase calculated for your birth moment. Move through the 15 days before and after birth with the timeline. |
+| Two-person compatibility | Select two profiles, explore their individual charts and a midpoint composite chart, and request relationship reflections. |
+| Profiles and reports | Save profiles in your browser and download a simple HTML chart report without creating an account. |
+| Motion controls | Pause decorative motion and explore the interface with reduced-motion support. |
+
+### Try a quick demo
+
+1. Open the [live website](https://chandra-moon-journey-mw.noisy-fig-2085.chatgpt.site).
+2. Choose **Explore an example chart**, or enter your own birth details.
+3. Hover over or select chart areas to explore their meanings.
+4. Open **DeepSeek reading** and ask a reflection question.
+5. Open **Birth Moon** and move the timeline to see the phase change.
+6. In **Two-person compatibility**, try the fictional example pair and switch between Chart A, Chart B, and Composite.
+
+The birth chart remains the default result view. Date and time controls use browser-native pickers, so their appearance and 12/24-hour format vary by browser and device.
+
+## How it works
+
+- **Astronomy Engine** calculates astronomical positions and lunar phase information.
+- **Luxon** interprets local birth times and time zones.
+- The astrology layer uses an **approximate Lahiri sidereal offset**, **mean lunar nodes**, and **whole-sign houses**, with derived D9 placements and Vimshottari life periods.
+- **SVG** supports interactive charts. **Canvas** renders a rotating globe using a NASA lunar surface map.
+- A **Cloudflare Worker** handles requests to the **DeepSeek API**, keeping credentials out of browser code.
+- **OpenAI Sites** hosts the public website. **GitHub** supports collaboration and version control; **OpenAI Codex** assisted development and iteration.
+
+The Moon’s rotation is accelerated for exploration. Its illumination responds to the selected instant, but the animation is not a photograph or a reconstruction of the exact view from a particular location. Local tilt and libration are not modeled.
+
+## Run locally
+
+Use a recent Node.js version supported by the installed Wrangler release, with npm.
 
 ```bash
 git clone https://github.com/MelissaWang1014/HackWashU2026.git
 cd HackWashU2026
 npm ci
 npm run build
-npm run db:local
 npm run dev
 ```
 
-Open **http://localhost:4173**. Local profile data is stored in Wrangler’s ignored `.wrangler/` directory. Local preview uses a local-only identity; it does not sign in to the original owner’s account.
+Open **http://localhost:4173**.
 
-**After changing files in `src/`, run `npm run build` again.** Wrangler serves the built Worker and reloads when the generated output changes; this repository does not have a separate source bundler in watch mode.
+The current build bundles the frontend into the Worker. After editing source files, run `npm run build` again and refresh the page; the development server does not directly bundle those source changes for you.
 
-```bash
-npm test                 # Calculation and message-handler regression checks
-npm run agent:terminal   # Real Spectrum terminal provider; no Photon credentials
-```
-
-In the terminal provider, send `/chandra help`. Use Ctrl+C to stop it. The provider may fetch its terminal interface on first run.
-
-## DeepSeek reading setup
-
-Basic readings and house exploration work without an API key. For real AI readings:
+### Enable local AI readings
 
 ```bash
 cp .dev.vars.example .dev.vars
-# Edit .dev.vars privately and set DEEPSEEK_API_KEY.
-npm run build
-npm run dev
 ```
 
-If `.dev.vars` already exists, edit it instead of overwriting it. Restart the development server after changing its variables. The optional `DEEPSEEK_MODEL` defaults to `deepseek-flash`, following [DeepSeek’s current API documentation](https://api-docs.deepseek.com/guides/harness). Requests use the server-side chat-completions endpoint, non-streaming output, a 45-second timeout, and a 1,500-token limit. The model can be changed with a server environment variable as provider availability changes.
+Edit `.dev.vars` privately:
 
-For hosted use, configure `DEEPSEEK_API_KEY` as a secret in the authorized hosting environment and optionally set `DEEPSEEK_MODEL`. Local `.dev.vars` is not uploaded and does not configure the original deployed site. No credential is included in this repository or browser bundle.
-
-Choose **DeepSeek reading**, enter a question, then choose **Generate my reading**. Only chart type, whether birth time is known, ascendant sign, planet signs/houses, and the question are sent to DeepSeek. The application excludes name, profile ID, birth date, time, location, and coordinates from the chart payload. Questions are user-entered, so avoid putting private details in them. Requests reuse the website’s account/origin checks. They do not send iMessages or save AI readings to D1. Readings remain in page memory per calculated chart and D1/D9 view; a page reload clears them.
-
-The existing guided Chandra/iMessage companion is separate from this AI-reading feature. Basic readings are deterministic local content, and are never presented as DeepSeek-generated responses. Automated tests mock provider responses. A live API check reached DeepSeek successfully, but generation returned HTTP 402 (insufficient account balance). The UI now reports this condition explicitly. Successful live generation still needs verification after the account has credit.
-
-## Architecture
-
-```text
-Browser
-  ├─ Birth details → Astronomy Engine + Luxon → charts and compatibility
-  ├─ /api/profiles → Cloudflare Worker → account-scoped Cloudflare D1
-  ├─ /api/reading → authenticated Cloudflare Worker → DeepSeek (optional server secret)
-  └─ Preview/copy selected chart context
-                  ↓ user pastes and sends in iMessage
-Photon managed iMessage line
-  └─ spectrum-ts → separate persistent Node.js agent → shared companion logic
+```dotenv
+DEEPSEEK_API_KEY=your_private_key
+DEEPSEEK_MODEL=deepseek-flash
 ```
 
-The website and messaging agent are **two separate processes**. Publishing the website does not deploy or keep the iMessage agent running. Spectrum’s cloud iMessage transport needs Node-compatible gRPC and cannot run in this website’s Worker isolate.
+Restart `npm run dev` after changing these values. The example model is the application’s configured default; set `DEEPSEEK_MODEL` to a model available to your account if needed.
 
-| Path | Purpose |
-| --- | --- |
-| `src/index.html`, `src/style.css` | English website structure and visual design |
-| `src/app.js` | Forms, profiles, charts, comparison |
-| `src/chart-reading.js`, `src/interpretation.js` | Interactive chart, local readings, element mix, privacy-minimized AI context |
-| `src/reading-api.js` | Server-side DeepSeek integration, validation, timeout and provider error handling |
-| `.dev.vars.example` | Local Worker secret configuration template |
-| `src/astro.js` | Validation, calculations, compatibility, shared companion responses |
-| `src/worker.js` | Website responses and authenticated profile API |
-| `db/schema.ts`, `drizzle/` | D1 schema and generated migrations |
-| `agent/server.js` | Photon cloud iMessage agent |
-| `agent/terminal.js` | Spectrum terminal development entrypoint |
-| `agent/handler.js` | Command handling, context isolation, deduplication, persistence |
-| `tests/core.test.js` | Core regression tests |
-| `build.mjs` | Bundles the browser app and Worker with esbuild |
-| `public/moon.jpg` | Moon image used by the site |
-| `.openai/hosting.json` | Existing Sites identity and logical D1 binding; no secrets |
-| `wrangler.jsonc` | **Local development configuration**, not a production deployment recipe |
+Without a key, local charts, basic readings, and the Moon explorer still work. AI readings display a configuration message. Provider access, available credit, and network connectivity are required for generation.
 
-## iMessage setup and current status
+**Never commit API keys.** `.dev.vars` and `.env` are ignored. Production secrets are configured separately in Sites; a local secret file does not configure the published website.
 
-A Photon project named **Chandra** has been created:
-
-- Project ID: `3ff28307-c2b9-483a-ab90-fee3c4c762bc` (an identifier, not a secret).
-- Shared agent receiving line: **+1 (415) 605-6081**.
-- This is **Photon’s assigned shared line**, not a teammate’s personal phone number.
-- Only phones added to the project’s [allowed users](https://app.photon.codes/dashboard/3ff28307-c2b9-483a-ab90-fee3c4c762bc/users) can test it. No personal user phone numbers are included in this repository.
-- The cloud agent successfully initialized on the original development Mac. A real phone-to-agent round trip has **not yet been confirmed**.
-- No always-on agent host has been deployed. A sleeping Mac or stopped process cannot reply.
-- No paid subscription or redemption of the event’s `HACKWITHPHOTON` code was performed. Check any offer’s current terms in Photon yourself.
-
-To run the agent:
+## Development and validation
 
 ```bash
-cp .env.example .env
-# Privately fill in SPECTRUM_PROJECT_ID and SPECTRUM_PROJECT_SECRET.
-# Obtain credentials from the authorized Photon project settings.
-npm run agent
+npm run build
+npm test
 ```
 
-Do not overwrite an existing `.env` on the original Mac. The original working copy may already have it. Never put the secret into browser code, GitHub, screenshots, or chat.
+The current suite contains 18 tests covering astronomical calculations, birth-time validation, chart context, lunar phases and illumination direction, API response handling, and the separate messaging agent’s context behavior. Provider tests use mocked responses; they do not replace live connectivity checks. A deployed DeepSeek request was also successfully tested with fictional birth data during development.
 
-Try these from an allowed phone:
+| Location | Purpose |
+| --- | --- |
+| `src/index.html` | Page structure and forms |
+| `src/style.css` | Shared visual design and responsive styles |
+| `src/app.js` | Profiles, chart navigation, comparison, and report downloads |
+| `src/astro.js` | Chart calculations and compatibility helpers |
+| `src/interpretation.js` | Interpretation helpers and reading-context validation |
+| `src/chart-reading.js` | Interactive chart exploration and personal readings |
+| `src/birth-moon.js` | Lunar calculations, rotating globe, and timeline |
+| `src/preview-motion.js` | Page motion controls |
+| `src/reading-api.js` | Server-side DeepSeek integration |
+| `src/worker.js` | Website assets and API routing |
+| `public/` | Lunar imagery and other public assets |
+| `tests/` | Automated checks |
+| `agent/` | Separate experimental Photon Spectrum integration |
 
-```text
-/chandra help
-/chandra import <context copied from the website>
-/chandra moon
-/chandra communication
-/chandra reflection
-/chandra forget
-```
+## Privacy and boundaries
 
-Context is scoped by platform, conversation, and sender. In group chats, the imported message and replies are visible to the group. Ask participants before sharing their chart context.
+- No account is required for the website.
+- Birth charts are calculated in the browser. Saved profiles use that browser’s local storage; they are not automatically synchronized between devices. Clearing site data removes saved profiles.
+- Requesting an AI reading sends chart context and the question through the server to DeepSeek. Individual-reading context omits names and raw birth dates, times, and locations. Relationship-reading context includes the selected profile names and chart placements. Information typed into a question is also sent.
+- API credentials remain server-side. Treat downloaded reports as personal files.
 
-The current adapter implements atomic local JSON persistence, lazy 30-day context expiry, seven-day event deduplication, and suppression of outbound echoes and ordinary conversation. It does not automatically retry a reply with uncertain delivery. Use a persistent disk and a single active process for this implementation; multi-instance coordination is not implemented.
+CHANDRA is for **cultural exploration and reflection**. Astrology readings are symbolic interpretations, not scientifically established predictions or medical, financial, or relationship advice. Calculations are exploratory approximations and may differ from specialist ephemerides, especially near boundaries. Users’ choices and lived experiences matter more than a chart.
 
-## Calculation scope and limits
+## What we learned
 
-This version calculates positions from entered birth details; it no longer returns a single fixed example reading. However, it is an **exploratory calculator**, not a certified Jyotish engine.
+Our biggest design challenge was keeping detailed charts approachable while making the Moon feel personal. Feedback led us to preserve the chart as the main starting point, give the Moon its own view, and keep both automatic rotation and a visible time slider.
 
-- Geocentric planetary positions come from Astronomy Engine.
-- Sidereal conversion uses a **linear approximate Lahiri offset**: 23.85675° at J2000 plus 50.29 arcseconds per year.
-- Lunar nodes are mean nodes; houses are whole-sign houses.
-- D9 and Vimshottari periods derive from those placements; a dasha year is 365.25 days.
-- This differs from the reference site’s True Chitra Paksha method and has not been numerically certified against Swiss Ephemeris.
-- Supported input dates are 1900–2100 and latitudes are limited to 66° S–66° N.
-- Unknown birth times use noon as an explicit reference. Ascendant, houses, D9, and dasha views are withheld; the Moon is checked across the local day for uncertainty.
-- Daylight-saving gaps are rejected; ambiguous repeated times require an explicit UTC offset.
-- Compatibility uses major angular relationships with an 8° maximum orb. It is **not traditional Ashtakoota / 36-point marriage matching**, a relationship-success score, or scientific prediction.
+We also learned to distinguish astronomical calculations, cultural interpretation, and AI-generated language. Each plays a different role, and clear boundaries make the experience easier to understand.
 
-## Tests and remaining work
+## Deployment and integration notes
 
-Verified during development:
+The public application is deployed through OpenAI Sites using the existing project configuration in `.openai/hosting.json`. Pushing to GitHub alone does **not** automatically update that website; publication is a separate step. Preserve production secrets and public-access settings when deploying.
 
-- `npm test`: 15 tests covering the original calculation/agent flows plus house rotation, D9 mappings, unknown-time handling, element totals, minimized AI payloads, provider configuration, validation, failures/timeouts and truncated responses.
-- Local browser flow: calculate a chart, save a profile, reload and retrieve it, compare two example people, and discuss the comparison.
-- Spectrum terminal provider received `/chandra help` and emitted a reply.
-- WebMCP navigation accepted a valid view and rejected an invalid one.
-- Published Sites deployment completed successfully.
+The repository retains an experimental **Photon Spectrum** agent. The website’s former “Discuss with Chandra” chat preview, iMessage entry point, and context-copy interface have been removed. Publishing the website does not start the standalone agent or establish a live iMessage service. It is not part of the current website demo.
 
-Still outstanding:
+Older D1 configuration and migration scripts also remain in the repository. The current website’s profile workflow uses browser storage rather than D1.
 
-1. Confirm a real iMessage reply from an allowed phone and test a copied chart import.
-2. Deploy the agent to an always-on Node host with persistent storage.
-3. Configure and verify live DeepSeek chart readings. The separate iMessage/general companion remains deterministic; extending that conversation is separate work.
-4. Verify numerical accuracy against a trusted ephemeris before claiming professional calculations; implement Ashtakoota separately if desired.
-5. Expand city lookup, accessibility/keyboard coverage, mobile testing, and database authorization integration tests.
-6. Review dependency audit findings before broader production use. The initial installation reported moderate vulnerabilities; a full remediation pass has not been performed.
+## Next steps
 
-## Deploying and continuing from another account
+- Improve date/time picker consistency across browsers.
+- Expand keyboard, screen-reader, and mobile testing.
+- Validate chart calculations against additional references.
+- Make AI data-sharing boundaries clearer, especially for relationship readings.
+- Explore optional journaling and richer explanations of Vedic traditions.
 
-The current live URL is managed by **Sites**. `.openai/hosting.json` identifies the existing site; do not create a duplicate or overwrite its identity when continuing in the same authorized project. Sites handles production D1 provisioning, migrations, and authenticated-user headers.
+## Credits
 
-The `wrangler.jsonc` database ID `local-preview` and `LOCAL_PREVIEW=1` are local development settings. Do not run `wrangler deploy` with them and assume production auth/storage are configured. A non-Sites deployment requires a real database binding and a verified authentication layer; never trust client-supplied identity headers directly.
+- [NASA Scientific Visualization Studio — CGI Moon Kit](https://svs.gsfc.nasa.gov/4720): lunar surface imagery, credited to NASA / GSFC / Arizona State University.
+- Astronomy Engine and Luxon for calculation and time-handling foundations.
+- DeepSeek for AI-generated readings.
+- Built collaboratively for HackWashU 2026 around the “Fly Me to the Moon” theme.
 
-A different Codex/ChatGPT account may lack access to the existing private Site or Photon project. GitHub access is separate. Continue locally if access is unavailable, and ask the owner to share the required services rather than inventing credentials or claiming access.
-
-## References and assets
-
-- Product structure reference: [YuHealer Trip Vedic calculator](https://yuuhealertrip.com/vedic). Chandra uses its own text and visual theme.
-- [Photon Spectrum documentation](https://photon.codes/docs/spectrum-ts/introduction) and [iMessage provider](https://photon.codes/docs/spectrum-ts/providers/imessage).
-- [Astronomy Engine](https://github.com/cosinekitty/astronomy).
-- Moon visualization: NASA Goddard, [source and reuse information](https://commons.wikimedia.org/wiki/File:Full_Moon_(15984763045).jpg).
-
-Dependency licenses remain those of their respective authors. No project-wide license has been selected by the team yet.
+*Astronomy draws the sky, culture offers a language for exploring it, and AI makes room for questions. How you live remains yours to decide.*
