@@ -4,6 +4,21 @@ import {elementBalance} from './interpretation.js';
 import {mountChartReading} from './chart-reading.js';
 import {calculate,compareCharts,compositeChart,relationshipThemes,SIGNS} from './astro.js';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];const form=$('#birthForm');let profiles=[],selected=[],current=null,pair=null,activeChartTab='d1',toastTimer,relationshipChat={messages:[],initialRequested:false,busy:false,error:'',question:'What should we understand first about this relationship?'};
+// Open the browser's calendar/time chooser from the entire field, not just its icon.
+for (const name of ['date', 'time']) {
+  const input = form.elements[name];
+  const openPicker = () => {
+    if (typeof input.showPicker !== 'function') return;
+    try { input.showPicker(); } catch { /* Native editing remains available. */ }
+  };
+  input.addEventListener('click', openPicker);
+  input.addEventListener('keydown', event => {
+    if (event.altKey && event.key === 'ArrowDown') {
+      event.preventDefault();
+      openPicker();
+    }
+  });
+}
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const cities=[['Mumbai, India',19.076,72.8777,'Asia/Kolkata'],['New Delhi, India',28.6139,77.209,'Asia/Kolkata'],['Bengaluru, India',12.9716,77.5946,'Asia/Kolkata'],['Chennai, India',13.0827,80.2707,'Asia/Kolkata'],['Kolkata, India',22.5726,88.3639,'Asia/Kolkata'],['Shanghai, China',31.2304,121.4737,'Asia/Shanghai'],['Beijing, China',39.9042,116.4074,'Asia/Shanghai'],['Taipei, Taiwan',25.033,121.5654,'Asia/Taipei'],['Hong Kong',22.3193,114.1694,'Asia/Hong_Kong'],['Singapore',1.3521,103.8198,'Asia/Singapore'],['Tokyo, Japan',35.6762,139.6503,'Asia/Tokyo'],['St. Louis, United States',38.627,-90.1994,'America/Chicago'],['Chicago, United States',41.8781,-87.6298,'America/Chicago'],['New York, United States',40.7128,-74.006,'America/New_York'],['Los Angeles, United States',34.0522,-118.2437,'America/Los_Angeles'],['Denver, United States',39.7392,-104.9903,'America/Denver'],['London, United Kingdom',51.5074,-.1278,'Europe/London'],['Paris, France',48.8566,2.3522,'Europe/Paris'],['Sydney, Australia',-33.8688,151.2093,'Australia/Sydney']];
 const birthplaceField=form.elements.city;
